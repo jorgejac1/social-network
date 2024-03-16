@@ -1,7 +1,12 @@
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import rootReducer from './reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import postsReducer from './slices/postSlice';
+import userProfileReducer from './slices/userProflieSlice';
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+const store = configureStore({
+  reducer: {
+    posts: postsReducer,
+    userProfile: userProfileReducer,
+  },
+});
 
 export default store;

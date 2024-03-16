@@ -69,8 +69,8 @@ const UserProfile = () => {
     );
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (error || !profileData) {
+    return <div>Error: {error ? error.message : 'Profile data not found'}</div>;
   }
 
   return (

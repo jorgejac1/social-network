@@ -1,66 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPostsRequest, fetchPostsSuccess, fetchPostsFailure } from '../redux/slices/postSlice';
 import { getPosts } from '../services/api';
 import PostDetail from './PostDetail';
-import { styled } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const PostListContainer = styled('div')({
-  maxWidth: '800px',
-  margin: 'auto',
-  padding: '20px',
-});
-
-const Title = styled('h1')({
-  textAlign: 'center',
-  marginBottom: '20px',
-});
-
-const SpinnerContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '200px',
-});
-
 const PostList = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const dispatch = useDispatch();
+  const { loading, posts, error } = useSelector(state => state.posts);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getPosts();
-        setPosts(response.data);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+    dispatch(fetchPostsRequest());
+    getPosts()
+      .then(response => dispatch(fetchPostsSuccess(response.data)))
+      .catch(error => dispatch(fetchPostsFailure(error.message)));
+  }, [dispatch]);
 
   if (loading) {
-    return (
-      <SpinnerContainer>
-        <CircularProgress />
-      </SpinnerContainer>
-    );
+    return <CircularProgress />;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <PostListContainer>
-      <Title>Social Network Application</Title>
+    <div>
       {posts.map(post => (
-        <PostDetail key={post.id} userName={post.userName} post={post} />
+        <PostDetail key={post.id} post={post} />
       ))}
-    </PostListContainer>
+    </div>
   );
 };
 

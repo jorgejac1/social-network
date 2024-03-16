@@ -18,7 +18,7 @@ const Title = styled('h3')({
   marginBottom: '6px',
 });
 
-const Body = styled('p')({
+const Body = styled('div')({
   fontSize: '16px',
   lineHeight: '1.6',
 });
