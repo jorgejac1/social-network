@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPostsRequest, fetchPostsSuccess, fetchPostsFailure } from '../redux/slices/postSlice';
 import { getPosts } from '../services/api';
@@ -9,12 +9,19 @@ const PostList = () => {
   const dispatch = useDispatch();
   const { loading, posts, error } = useSelector(state => state.posts);
 
-  useEffect(() => {
+  const fetchPosts = useCallback(async () => {
     dispatch(fetchPostsRequest());
-    getPosts()
-      .then(response => dispatch(fetchPostsSuccess(response.data)))
-      .catch(error => dispatch(fetchPostsFailure(error.message)));
+    try {
+      const response = await getPosts();
+      dispatch(fetchPostsSuccess(response.data));
+    } catch (error) {
+      dispatch(fetchPostsFailure(error.message));
+    }
   }, [dispatch]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   if (loading) {
     return <CircularProgress />;

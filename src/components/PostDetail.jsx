@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { styled } from '@mui/system';
 
 const RootContainer = styled('div')({
@@ -24,12 +24,14 @@ const Body = styled('div')({
 });
 
 const PostDetail = ({ userName, post }) => {
+  const RootContainerMemo = useMemo(() => RootContainer, []);
+
   return (
-    <RootContainer>
+    <RootContainerMemo>
       <UserName>{userName}</UserName>
       <Title>{post.title}</Title>
       <Body dangerouslySetInnerHTML={{ __html: post.body }} />
-    </RootContainer>
+    </RootContainerMemo>
   );
 };
 
